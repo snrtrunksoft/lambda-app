@@ -5,19 +5,24 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - npm install -g aws-cli
-      - yum install -y jq
+      - yum install -y jq zip
   build:
     commands:
-      - echo "Packaging Lambda code..."
+      - echo "📦 Packaging Lambda code..."
       - zip -r lambda.zip index.js
 
-      # Dev deployment
-      - echo "Uploading to Dev bucket..."
+      - echo "☁️ Uploading to Dev bucket..."
       - aws s3 cp lambda.zip s3://my-lambda-artifacts-css-dev/lambda.zip
-      - echo "Assuming into CSS_Dev..."
+
+      - echo "🔐 Assuming into CSS_Dev..."
       - CREDS=$(aws sts assume-role --role-arn arn:aws:iam::307946644551:role/LambdaDeployerRole --role-session-name dev-deploy)
       - export AWS_ACCESS_KEY_ID=$(echo $CREDS | jq -r '.Credentials.AccessKeyId')
       - export AWS_SECRET_ACCESS_KEY=$(echo $CREDS | jq -r '.Credentials.SecretAccessKey')
       - export AWS_SESSION_TOKEN=$(echo $CREDS | jq -r '.Credentials.SessionToken')
+
+      - echo "🚀 Deploying Lambda via CloudFormation..."
       - aws cloudformation deploy --template-file template.yaml --stack-name LambdaStackDev --capabilities CAPABILITY_NAMED_IAM --region us-east-1
+
+post_build:
+  commands:
+    - echo "✅ Lambda deployed to CSS_Dev successfully!"
