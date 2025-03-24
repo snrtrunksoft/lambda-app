@@ -31,4 +31,4 @@ Resources:
       Code:
         S3Bucket: !Sub "my-lambda-artifacts-css-dev"
         S3Key: lambda.zip
-      Timeout: 10
+      Timeout: 30
