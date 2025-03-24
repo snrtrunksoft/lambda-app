@@ -29,6 +29,6 @@ Resources:
       Runtime: nodejs18.x
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Sub "my-lambda-artifacts-${AWS::AccountId}"
+        S3Bucket: !Sub "my-lambda-artifacts-css-dev"
         S3Key: lambda.zip
       Timeout: 10
